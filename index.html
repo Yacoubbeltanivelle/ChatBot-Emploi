@@ -1,11 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ChatBot Emploi</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="reset.css">
 </head>
+
 <body>
-    
+
+    <h1>ChatBot Emploi</h1>
+
+    <div class="container">
+        <div class="input-group">
+            <label for="infoEntreprise">Infos entreprise</label>
+            <input type="text" id="infoEntreprise" placeholder="Entrez les infos de l'entreprise">
+        </div>
+        <div class="input-group">
+            <label for="infoUtilisateur">Infos personnelle de l'utilisateur</label>
+            <input type="text" id="infoUtilisateur" placeholder="Entrez vos infos personnelles">
+        </div>
+        <button onclick="afficherResultat()">ok</button>
+        <div class="result" id="resultat">
+            Resultat:
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
+
 </html>
