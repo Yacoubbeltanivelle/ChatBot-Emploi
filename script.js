@@ -1,5 +1,6 @@
 let apiKey = "";
 let conversationHistory = [];
+let currentConversationKey = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   promptForApiKey();
@@ -31,45 +32,41 @@ function promptForApiKey() {
   }
 }
 
-function getConversationNames() {
-  return JSON.parse(localStorage.getItem("conversationNames")) || {};
+function getChatListHistory() {
+  return JSON.parse(localStorage.getItem("chatListHistory")) || [];
 }
 
-function saveConversationNames(names) {
-  localStorage.setItem("conversationNames", JSON.stringify(names));
+function saveChatListHistory(chatList) {
+  localStorage.setItem("chatListHistory", JSON.stringify(chatList));
 }
 
 function listSavedConversations() {
   const conversationListDiv = document.getElementById("conversation-list");
   conversationListDiv.innerHTML = "";
 
-  const conversationNames = getConversationNames();
+  const chatList = getChatListHistory();
 
-  Object.keys(localStorage).forEach((key) => {
-    if (key.startsWith("chatHistory_")) {
-      const conversationDiv = createConversationDiv(
-        key,
-        conversationNames[key]
-      );
-      conversationListDiv.appendChild(conversationDiv);
-    }
+  chatList.forEach((chat, index) => {
+    const conversationDiv = createConversationDiv(index, chat.name);
+    conversationListDiv.appendChild(conversationDiv);
   });
 }
 
-function createConversationDiv(key, displayName) {
+function createConversationDiv(index, displayName) {
   const conversationDiv = document.createElement("div");
   conversationDiv.style.display = "flex";
   conversationDiv.style.alignItems = "center";
   conversationDiv.style.marginBottom = "5px";
 
-  const button = createButton(
-    displayName || key.replace("chatHistory_", "Conversation "),
-    () => loadConversation(key)
+  const button = createButton(displayName || `Conversation ${index + 1}`, () =>
+    loadConversation(index)
   );
-  const renameButton = createButton("Renommer", () => renameConversation(key));
+  const renameButton = createButton("Renommer", () =>
+    renameConversation(index)
+  );
   const deleteButton = createButton(
     "Supprimer",
-    () => deleteConversation(key),
+    () => deleteConversation(index),
     "red",
     "white"
   );
@@ -91,31 +88,35 @@ function createButton(text, onClick, backgroundColor = "", textColor = "") {
   return button;
 }
 
-function renameConversation(key) {
+function renameConversation(index) {
   const newName = prompt("Entrez le nouveau nom pour cette conversation :");
   if (newName) {
-    const conversationNames = getConversationNames();
-    conversationNames[key] = newName;
-    saveConversationNames(conversationNames);
+    const chatList = getChatListHistory();
+    chatList[index].name = newName;
+    saveChatListHistory(chatList);
     listSavedConversations();
   }
 }
 
-function deleteConversation(key) {
+function deleteConversation(index) {
   if (confirm("Voulez-vous vraiment supprimer cette conversation ?")) {
-    localStorage.removeItem(key);
+    const chatList = getChatListHistory();
+    chatList.splice(index, 1);
+    saveChatListHistory(chatList);
     listSavedConversations();
   }
 }
 
-function loadConversation(key) {
-  const savedConversation = JSON.parse(localStorage.getItem(key));
+function loadConversation(index) {
+  const chatList = getChatListHistory();
+  const savedConversation = chatList[index];
   if (savedConversation) {
-    conversationHistory = savedConversation;
+    conversationHistory = savedConversation.history;
+    currentConversationKey = index;
     const messagesDiv = document.getElementById("messages");
     messagesDiv.innerHTML = "";
 
-    savedConversation.forEach(({ role, content }) => {
+    savedConversation.history.forEach(({ role, content }) => {
       const sender = role === "user" ? "Vous" : "ChatBot Emploi";
       addMessageToChat(sender, content);
     });
@@ -126,16 +127,24 @@ function sendMessage() {
   const userInput = document.getElementById("user-input");
   const message = userInput.value.trim();
   if (message) {
-    if (conversationHistory.length === 0) {
-      const timestamp = new Date().toISOString();
-      localStorage.setItem(
-        `chatHistory_${timestamp}`,
-        JSON.stringify(conversationHistory)
-      );
+    if (conversationHistory.length === 0 || currentConversationKey === null) {
+      const chatList = getChatListHistory();
+
+      // Extraire les 4 premiers mots pour le nom de la conversation
+      const words = message.split(" ");
+      const conversationName =
+        words.slice(0, 4).join(" ") + (words.length > 4 ? "..." : "");
+
+      const newConversation = {
+        name: conversationName,
+        history: [],
+      };
+      chatList.push(newConversation);
+      currentConversationKey = chatList.length - 1;
+      saveChatListHistory(chatList);
       listSavedConversations();
     }
     addMessageToChat("Vous", message);
-    saveMessageToLocalStorage("Vous", message);
     updateConversationHistory("user", message);
     userInput.value = "";
     fetchResponseFromOpenAI(message);
@@ -150,21 +159,11 @@ function addMessageToChat(sender, message) {
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-function saveMessageToLocalStorage(sender, message) {
-  const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
-  messages.push({ sender, message });
-  localStorage.setItem("chatMessages", JSON.stringify(messages));
-}
-
-function loadMessagesFromLocalStorage() {
-  const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
-  messages.forEach(({ sender, message }) => {
-    addMessageToChat(sender, message);
-  });
-}
-
 function updateConversationHistory(role, content) {
   conversationHistory.push({ role, content });
+  const chatList = getChatListHistory();
+  chatList[currentConversationKey].history = conversationHistory;
+  saveChatListHistory(chatList);
 }
 
 async function fetchResponseFromOpenAI(message) {
@@ -194,7 +193,6 @@ async function fetchResponseFromOpenAI(message) {
     const data = await response.json();
     const botMessage = data.choices[0].message.content;
     addMessageToChat("ChatBot Emploi", botMessage);
-    saveMessageToLocalStorage("ChatBot Emploi", botMessage);
     updateConversationHistory("assistant", botMessage);
   } catch (error) {
     addMessageToChat("Erreur", error.message);
@@ -202,13 +200,8 @@ async function fetchResponseFromOpenAI(message) {
 }
 
 function startNewChat() {
-  const timestamp = new Date().toISOString();
-  localStorage.setItem(
-    `chatHistory_${timestamp}`,
-    JSON.stringify(conversationHistory)
-  );
-
   conversationHistory = [];
+  currentConversationKey = null;
 
   const messagesDiv = document.getElementById("messages");
   messagesDiv.innerHTML = "";
