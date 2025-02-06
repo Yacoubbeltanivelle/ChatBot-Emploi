@@ -4,7 +4,6 @@ let currentConversationKey = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   promptForApiKey();
-  loadMessagesFromLocalStorage();
   listSavedConversations();
 });
 
