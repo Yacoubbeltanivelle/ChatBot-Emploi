@@ -1,4 +1,5 @@
-let apiKey = '';
+let apiKey = "";
+let conversationHistory = [];
 
 // Demande la clé API dès l'arrivée sur le site
 function promptForApiKey() {
@@ -8,20 +9,27 @@ function promptForApiKey() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", promptForApiKey);
+document.addEventListener("DOMContentLoaded", () => {
+  promptForApiKey();
+  loadMessagesFromLocalStorage();
+});
 
 document.getElementById("send-button").addEventListener("click", sendMessage);
-document.getElementById("user-input").addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    sendMessage();
-  }
-});
+document
+  .getElementById("user-input")
+  .addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  });
 
 function sendMessage() {
   const userInput = document.getElementById("user-input");
   const message = userInput.value.trim();
   if (message) {
     addMessageToChat("Vous", message);
+    saveMessageToLocalStorage("Vous", message);
+    updateConversationHistory("user", message);
     userInput.value = "";
     fetchResponseFromOpenAI(message);
   }
@@ -33,6 +41,23 @@ function addMessageToChat(sender, message) {
   messageElement.textContent = `${sender}: ${message}`;
   messagesDiv.appendChild(messageElement);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function saveMessageToLocalStorage(sender, message) {
+  const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+  messages.push({ sender, message });
+  localStorage.setItem("chatMessages", JSON.stringify(messages));
+}
+
+function loadMessagesFromLocalStorage() {
+  const messages = JSON.parse(localStorage.getItem("chatMessages")) || [];
+  messages.forEach(({ sender, message }) => {
+    addMessageToChat(sender, message);
+  });
+}
+
+function updateConversationHistory(role, content) {
+  conversationHistory.push({ role, content });
 }
 
 async function fetchResponseFromOpenAI(message) {
@@ -51,7 +76,7 @@ async function fetchResponseFromOpenAI(message) {
       },
       body: JSON.stringify({
         model: "gpt-4",
-        messages: [{ role: "user", content: message }],
+        messages: conversationHistory,
       }),
     });
 
@@ -62,6 +87,8 @@ async function fetchResponseFromOpenAI(message) {
     const data = await response.json();
     const botMessage = data.choices[0].message.content;
     addMessageToChat("ChatBot Emploi", botMessage);
+    saveMessageToLocalStorage("ChatBot Emploi", botMessage);
+    updateConversationHistory("assistant", botMessage);
   } catch (error) {
     addMessageToChat("Erreur", error.message);
   }
