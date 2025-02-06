@@ -1,38 +1,37 @@
 <!DOCTYPE html>
 <html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chatbot avec OpenAI</title>
-    <link rel="stylesheet" href="test.css">
-    <link rel="stylesheet" href="reset.css">
-</head>
+    <link rel="stylesheet" href="test.css" />
+    <link rel="stylesheet" href="reset.css" />
+  </head>
 
-<body>
+  <body id="body">
     <nav id="navbar">
-        <div id="chat-saves">
-            
-        </div>
+      <div id="conversation-list"></div>
     </nav>
 
     <div id="chat">
-        <div id="container">
-            <div id="chat-container">
-                <div id="chat-box">
-                    <div id="messages"></div>
-                </div>
-                <div id="input-bar">
-                    <input type="text" id="user-input" placeholder="Tapez votre message ici...">
-                    <button id="send-button">Envoyer</button>
-                    <button id="new-chat-button">Nouveau Chat</button>
-                </div>
-            </div>
+      <div id="container">
+        <div id="chat-container">
+          <div id="chat-box">
+            <div id="messages"></div>
+          </div>
+          <div id="input-bar">
+            <input
+              type="text"
+              id="user-input"
+              placeholder="Tapez votre message ici..."
+            />
+            <button id="send-button">Envoyer</button>
+            <button id="new-chat-button">Nouveau Chat</button>
+          </div>
         </div>
+      </div>
     </div>
 
-    <script src="script.js">
-    </script>
-</body>
-
+    <script src="script.js"></script>
+  </body>
 </html>

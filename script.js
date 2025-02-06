@@ -1,7 +1,25 @@
 let apiKey = "";
 let conversationHistory = [];
 
-// Demande la clé API dès l'arrivée sur le site
+document.addEventListener("DOMContentLoaded", () => {
+  promptForApiKey();
+  loadMessagesFromLocalStorage();
+  listSavedConversations();
+});
+
+document.getElementById("send-button").addEventListener("click", sendMessage);
+document
+  .getElementById("user-input")
+  .addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  });
+
+document
+  .getElementById("new-chat-button")
+  .addEventListener("click", startNewChat);
+
 function promptForApiKey() {
   apiKey =
     localStorage.getItem("apiKey") ||
@@ -13,19 +31,96 @@ function promptForApiKey() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  promptForApiKey();
-  loadMessagesFromLocalStorage();
-});
+function getConversationNames() {
+  return JSON.parse(localStorage.getItem("conversationNames")) || {};
+}
 
-document.getElementById("send-button").addEventListener("click", sendMessage);
-document
-  .getElementById("user-input")
-  .addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      sendMessage();
+function saveConversationNames(names) {
+  localStorage.setItem("conversationNames", JSON.stringify(names));
+}
+
+function listSavedConversations() {
+  const conversationListDiv = document.getElementById("conversation-list");
+  conversationListDiv.innerHTML = "";
+
+  const conversationNames = getConversationNames();
+
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith("chatHistory_")) {
+      const conversationDiv = createConversationDiv(
+        key,
+        conversationNames[key]
+      );
+      conversationListDiv.appendChild(conversationDiv);
     }
   });
+}
+
+function createConversationDiv(key, displayName) {
+  const conversationDiv = document.createElement("div");
+  conversationDiv.style.display = "flex";
+  conversationDiv.style.alignItems = "center";
+  conversationDiv.style.marginBottom = "5px";
+
+  const button = createButton(
+    displayName || key.replace("chatHistory_", "Conversation "),
+    () => loadConversation(key)
+  );
+  const renameButton = createButton("Renommer", () => renameConversation(key));
+  const deleteButton = createButton(
+    "Supprimer",
+    () => deleteConversation(key),
+    "red",
+    "white"
+  );
+
+  conversationDiv.appendChild(button);
+  conversationDiv.appendChild(renameButton);
+  conversationDiv.appendChild(deleteButton);
+
+  return conversationDiv;
+}
+
+function createButton(text, onClick, backgroundColor = "", textColor = "") {
+  const button = document.createElement("button");
+  button.textContent = text;
+  button.style.marginRight = "10px";
+  button.style.backgroundColor = backgroundColor;
+  button.style.color = textColor;
+  button.addEventListener("click", onClick);
+  return button;
+}
+
+function renameConversation(key) {
+  const newName = prompt("Entrez le nouveau nom pour cette conversation :");
+  if (newName) {
+    const conversationNames = getConversationNames();
+    conversationNames[key] = newName;
+    saveConversationNames(conversationNames);
+    listSavedConversations();
+  }
+}
+
+function deleteConversation(key) {
+  if (confirm("Voulez-vous vraiment supprimer cette conversation ?")) {
+    localStorage.removeItem(key);
+    listSavedConversations();
+  }
+}
+
+function loadConversation(key) {
+  const savedConversation = JSON.parse(localStorage.getItem(key));
+  if (savedConversation) {
+    conversationHistory = savedConversation;
+    const messagesDiv = document.getElementById("messages");
+    messagesDiv.innerHTML = "";
+
+    savedConversation.forEach(({ role, content }) => {
+      const sender = role === "user" ? "Vous" : "ChatBot Emploi";
+      addMessageToChat(sender, content);
+    });
+  }
+}
 
 function sendMessage() {
   const userInput = document.getElementById("user-input");
@@ -99,24 +194,16 @@ async function fetchResponseFromOpenAI(message) {
 }
 
 function startNewChat() {
-  // Sauvegarder l'historique actuel avec un identifiant unique
   const timestamp = new Date().toISOString();
   localStorage.setItem(
     `chatHistory_${timestamp}`,
     JSON.stringify(conversationHistory)
   );
 
-  // Réinitialiser l'historique de conversation
   conversationHistory = [];
 
-  // Effacer les messages affichés
   const messagesDiv = document.getElementById("messages");
   messagesDiv.innerHTML = "";
 
-  // Effacer les messages enregistrés dans le local storage pour le chat en cours
   localStorage.removeItem("chatMessages");
 }
-
-document
-  .getElementById("new-chat-button")
-  .addEventListener("click", startNewChat);
