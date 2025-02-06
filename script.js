@@ -3,9 +3,13 @@ let conversationHistory = [];
 
 // Demande la clé API dès l'arrivée sur le site
 function promptForApiKey() {
-  apiKey = prompt("Veuillez entrer votre clé API OpenAI :");
+  apiKey =
+    localStorage.getItem("apiKey") ||
+    prompt("Veuillez entrer votre clé API OpenAI :");
   if (!apiKey) {
     alert("Une clé API est nécessaire pour utiliser ce chatbot.");
+  } else {
+    localStorage.setItem("apiKey", apiKey);
   }
 }
 
