@@ -1,7 +1,5 @@
 body {
-    font-family: 'Courier New', Courier, monospace;
-    text-align: center;
-    background-color: #f5f5f5;
+    overflow: hidden;
 }
 
 h1 {
