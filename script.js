@@ -120,3 +120,4 @@ function startNewChat() {
 document
   .getElementById("new-chat-button")
   .addEventListener("click", startNewChat);
+
