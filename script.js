@@ -97,3 +97,26 @@ async function fetchResponseFromOpenAI(message) {
     addMessageToChat("Erreur", error.message);
   }
 }
+
+function startNewChat() {
+  // Sauvegarder l'historique actuel avec un identifiant unique
+  const timestamp = new Date().toISOString();
+  localStorage.setItem(
+    `chatHistory_${timestamp}`,
+    JSON.stringify(conversationHistory)
+  );
+
+  // Réinitialiser l'historique de conversation
+  conversationHistory = [];
+
+  // Effacer les messages affichés
+  const messagesDiv = document.getElementById("messages");
+  messagesDiv.innerHTML = "";
+
+  // Effacer les messages enregistrés dans le local storage pour le chat en cours
+  localStorage.removeItem("chatMessages");
+}
+
+document
+  .getElementById("new-chat-button")
+  .addEventListener("click", startNewChat);
