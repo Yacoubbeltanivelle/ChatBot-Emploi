@@ -29,6 +29,11 @@
   font-weight: 600;
 }
 
+#conversation-list div button:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
 #chat {
   font-family: "Roboto", serif;
   font-weight: 600;
@@ -101,4 +106,6 @@
 #send-button:hover,
 #new-chat-button:hover {
   background-color: #0056b3;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
