@@ -28,6 +28,11 @@ body {
     flex-direction: column;
 }
 
+#input-bar{
+    display: flex;
+    flex-direction: row;
+}
+
 #user-input {
     width: calc(100% - 60px);
     padding: 10px;
