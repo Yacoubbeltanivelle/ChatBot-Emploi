@@ -1,18 +1,21 @@
-function afficherResultat() {
-  const infoEntreprise = document.getElementById("infoEntreprise").value;
-  const infoUtilisateur = document.getElementById("infoUtilisateur").value;
-  const resultat = `Entreprise: ${infoEntreprise} | Utilisateur: ${infoUtilisateur}`;
-  document.getElementById("resultat").innerText = resultat;
+let apiKey = '';
+
+// Demande la clé API dès l'arrivée sur le site
+function promptForApiKey() {
+  apiKey = prompt("Veuillez entrer votre clé API OpenAI :");
+  if (!apiKey) {
+    alert("Une clé API est nécessaire pour utiliser ce chatbot.");
+  }
 }
 
+document.addEventListener("DOMContentLoaded", promptForApiKey);
+
 document.getElementById("send-button").addEventListener("click", sendMessage);
-document
-  .getElementById("user-input")
-  .addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-      sendMessage();
-    }
-  });
+document.getElementById("user-input").addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    sendMessage();
+  }
+});
 
 function sendMessage() {
   const userInput = document.getElementById("user-input");
@@ -33,19 +36,33 @@ function addMessageToChat(sender, message) {
 }
 
 async function fetchResponseFromOpenAI(message) {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${OPENAI_KEY}`,
-    },
-    body: JSON.stringify({
-      model: "gpt-4o",
-      messages: [{ role: "user", content: message }],
-    }),
-  });
+  if (!apiKey) {
+    alert("Veuillez entrer une clé valide.");
+    promptForApiKey();
+    return;
+  }
 
-  const data = await response.json();
-  const botMessage = data.choices[0].message.content;
-  addMessageToChat("ChatBot Emploi", botMessage);
+  try {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4",
+        messages: [{ role: "user", content: message }],
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erreur : ${response.status}`);
+    }
+
+    const data = await response.json();
+    const botMessage = data.choices[0].message.content;
+    addMessageToChat("ChatBot Emploi", botMessage);
+  } catch (error) {
+    addMessageToChat("Erreur", error.message);
+  }
 }
