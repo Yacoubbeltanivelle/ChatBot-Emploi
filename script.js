@@ -206,4 +206,6 @@ function startNewChat() {
   messagesDiv.innerHTML = "";
 
   localStorage.removeItem("chatMessages");
+
+  listSavedConversations();
 }
