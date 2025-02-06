@@ -126,6 +126,14 @@ function sendMessage() {
   const userInput = document.getElementById("user-input");
   const message = userInput.value.trim();
   if (message) {
+    if (conversationHistory.length === 0) {
+      const timestamp = new Date().toISOString();
+      localStorage.setItem(
+        `chatHistory_${timestamp}`,
+        JSON.stringify(conversationHistory)
+      );
+      listSavedConversations();
+    }
     addMessageToChat("Vous", message);
     saveMessageToLocalStorage("Vous", message);
     updateConversationHistory("user", message);
