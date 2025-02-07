@@ -207,3 +207,8 @@ function startNewChat() {
 
   localStorage.removeItem("chatMessages");
 }
+
+document
+  .getElementById("new-chat-button")
+  .addEventListener("click", startNewChat);
+
