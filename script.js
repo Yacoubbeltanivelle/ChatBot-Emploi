@@ -3,6 +3,45 @@ let conversationHistory = [];
 let currentConversationKey = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("apiKeyModal");
+  const closeModal = document.getElementById("closeModal");
+  const saveApiKeyButton = document.getElementById("saveApiKeyButton");
+  const apiKeyInput = document.getElementById("apiKeyInput");
+
+  function openModal() {
+    modal.style.display = "block";
+  }
+
+  function closeModalHandler() {
+    modal.style.display = "none";
+  }
+
+  closeModal.onclick = closeModalHandler;
+
+  window.onclick = function (event) {
+    if (event.target === modal) {
+      closeModalHandler();
+    }
+  };
+
+  saveApiKeyButton.onclick = function () {
+    const enteredApiKey = apiKeyInput.value.trim();
+    if (enteredApiKey) {
+      apiKey = enteredApiKey;
+      localStorage.setItem("apiKey", apiKey);
+      closeModalHandler();
+    } else {
+      alert("Une clé API est nécessaire pour utiliser ce chatbot.");
+    }
+  };
+
+  function promptForApiKey() {
+    apiKey = localStorage.getItem("apiKey");
+    if (!apiKey) {
+      openModal();
+    }
+  }
+
   promptForApiKey();
   listSavedConversations();
 });
@@ -19,17 +58,6 @@ document
 document
   .getElementById("new-chat-button")
   .addEventListener("click", startNewChat);
-
-function promptForApiKey() {
-  apiKey =
-    localStorage.getItem("apiKey") ||
-    prompt("Veuillez entrer votre clé API OpenAI :");
-  if (!apiKey) {
-    alert("Une clé API est nécessaire pour utiliser ce chatbot.");
-  } else {
-    localStorage.setItem("apiKey", apiKey);
-  }
-}
 
 function getChatListHistory() {
   return JSON.parse(localStorage.getItem("chatListHistory")) || [];
