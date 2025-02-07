@@ -36,6 +36,9 @@
   border: 1px solid #fff;
   color: white;
   border-radius: 10px;
+
+  margin-right: 2px;
+  margin-bottom: 10px;
   cursor: pointer;
   font-family: "Roboto", serif;
   font-weight: 600;
@@ -44,6 +47,7 @@
 #conversation-list div button:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background-color: #747474;
 }
 
 #chat {
