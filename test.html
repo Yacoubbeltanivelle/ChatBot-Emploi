@@ -31,28 +31,52 @@
           </div>
         </div>
       </div>
-    </div>
+      <!-- Modal -->
+      <div id="apiKeyModal" class="modal">
+        <div class="modal-content">
+          <span id="closeModal" class="close">&times;</span>
+          <h2>Entrer votre clé API OpenAI</h2>
+          <div id="inputGrp">
+            <input
+              type="text"
+              id="apiKeyInput"
+              placeholder="Votre clé API ici"
+            />
+            <button id="saveApiKeyButton">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="20px"
+                viewBox="0 -960 960 960"
+                width="20px"
+                fill="#e8eaed"
+              >
+                <path
+                  d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
 
-    <!-- Modal -->
-    <div id="apiKeyModal" class="modal">
-      <div class="modal-content">
-        <span id="closeModal" class="close">&times;</span>
-        <h2>Entrer votre clé API OpenAI</h2>
-        <div id="inputGrp">
-          <input type="text" id="apiKeyInput" placeholder="Votre clé API ici" />
-          <button id="saveApiKeyButton">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              height="20px"
-              viewBox="0 -960 960 960"
-              width="20px"
-              fill="#e8eaed"
-            >
-              <path
-                d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z"
-              />
-            </svg>
-          </button>
+      <!-- Modal pour renommer une conversation -->
+      <div id="renameModal" class="modal">
+        <div class="modal-content">
+          <span id="closeRenameModal" class="close">&times;</span>
+          <h2>Renommer la conversation</h2>
+          <input type="text" id="renameInput" placeholder="Nouveau nom" />
+          <button id="saveRenameButton">Renommer</button>
+        </div>
+      </div>
+
+      <!-- Modal pour confirmer la suppression -->
+      <div id="deleteModal" class="modal">
+        <div class="modal-content">
+          <span id="closeDeleteModal" class="close">&times;</span>
+          <h2>Confirmer la suppression</h2>
+          <p>Voulez-vous vraiment supprimer cette conversation ?</p>
+          <button id="confirmDeleteButton">Supprimer</button>
+          <button id="cancelDeleteButton">Annuler</button>
         </div>
       </div>
     </div>
