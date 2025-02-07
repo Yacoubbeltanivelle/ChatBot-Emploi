@@ -4,30 +4,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatBot Emploi</title>
+    <title>Générateur de Lettre de Motivation</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="reset.css">
 </head>
 
 <body>
 
-    <h1>ChatBot Emploi</h1>
+    <h1>Générateur de Lettre de Motivation</h1>
+
+    <nav>
+        <a href="test.html">ChatBot</a>
+    </nav>
 
     <div class="container">
-        <div class="input-group">
-            <label for="infoEntreprise">Infos entreprise</label>
-            <input type="text" id="infoEntreprise" placeholder="Entrez les infos de l'entreprise">
-        </div>
-        <div class="input-group">
-            <label for="infoUtilisateur">Infos personnelle de l'utilisateur</label>
-            <input type="text" id="infoUtilisateur" placeholder="Entrez vos infos personnelles">
-        </div>
-        <button onclick="afficherResultat()">ok</button>
+        <form id="job-form">
+            <div class="input-group">
+                <label for="jobInfo">Description de l'offre d'emploi (ou lien)</label>
+                <textarea id="jobInfo" rows="3" placeholder="Entrez la description de l'offre ou un lien vers celle-ci"
+                    required></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="userName">Nom</label>
+                <input type="text" id="userName" placeholder="Entrez votre nom" required>
+            </div>
+
+            <div class="input-group">
+                <label for="userFirstName">Prénom</label>
+                <input type="text" id="userFirstName" placeholder="Entrez votre prénom" required>
+            </div>
+
+            <div class="input-group">
+                <label for="userEmail">Adresse Email</label>
+                <input type="email" id="userEmail" placeholder="Entrez votre email" required>
+            </div>
+
+            <div class="input-group">
+                <label for="userExperience">Expérience professionnelle</label>
+                <textarea id="userExperience" rows="3"
+                    placeholder="Décrivez votre expérience professionnelle"></textarea>
+            </div>
+
+            <button type="button" id="generate-button">Générer la lettre de motivation</button>
+        </form>
+
         <div class="result" id="resultat">
-            Resultat:
+            <h2>Résultat:</h2>
+            <div id="letter-output"></div>
         </div>
     </div>
-    <script src="script.js"></script>
+
+    <script src="script2.js"></script>
 </body>
 
 </html>
