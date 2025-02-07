@@ -55,7 +55,8 @@
     cursor: pointer;
   }
 
-#closeRenameModal {
+#closeRenameModal,
+#closeDeleteModal {
     background-color: rgb(255, 0, 0);
     padding: 0px 7px 0px 7px;
     border-radius: 5px;
@@ -67,7 +68,8 @@
     rotate 1s;
 }
 
-#closeRenameModal:hover {
+#closeRenameModal:hover,
+#closeDeleteModal:hover {
     background-color: rgb(255, 74, 74);
     transform: translateY(-2px);
     border: 1px solid rgb(161, 161, 161);
